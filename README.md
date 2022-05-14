@@ -12,6 +12,11 @@ This template is quite unopinionated, but you might still find some things that 
 
  - Check whether you want to use `commonjs`. This entrypoint will be ideal for CLIs, but if you want to ship an actual module, this might be more complicated
 
+### Setup
+
+ - `yarn` to install all the dependencies
+ - `yarn start` to run default script
+
 ### Contributing
 
-If you want to improve this repo or have some useful insight - feel free to create an issue
+If see any bugs, want to improve this repo or have some useful insight - feel free to create an issue
