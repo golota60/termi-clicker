@@ -1,5 +1,5 @@
 {
-  "name": "termi-clicker",
+  "name": "node-template",
   "author": "Szymon Wiszczuk<golota60@gmail.com>",
   "version": "1.0.0",
   "main": "lib/index.js",
