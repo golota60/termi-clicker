@@ -7,9 +7,6 @@
   "files": [
     "lib"
   ],
-  "bin": {
-    "yayfetch": "./lib/index.js"
-  },
   "scripts": {
     "build": "rimraf lib && tsc",
     "start": "yarn build && node lib/index.js",
