@@ -2,13 +2,14 @@
   "name": "termi-clicker",
   "author": "Szymon Wiszczuk<golota60@gmail.com>",
   "version": "1.0.0",
-  "main": "lib/index.js",
+  "exports": "./lib/index.js",
+  "type": "module",
   "license": "MIT",
   "files": [
     "lib"
   ],
-  "bin": {
-    "yayfetch": "./lib/index.js"
+  "engines": {
+    "node": ">=14.16"
   },
   "scripts": {
     "build": "rimraf lib && tsc",
@@ -17,7 +18,7 @@
     "lint": "yarn eslint --ext '.js,.ts' ./src --fix",
     "jest": "jest tests",
     "test": "yarn start && yarn lint && yarn jest",
-    "prepare": "husky install",
+    "preinstall": "husky install",
     "prepublishOnly": "git push --tags && yarn && yarn build",
     "release": "standard-version"
   },
@@ -32,6 +33,8 @@
     "@typescript-eslint/parser": "^5.23.0",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.2.1",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^8.0.1",
@@ -41,6 +44,6 @@
     "standard-version": "^9.3.2",
     "ts-jest": "^28.0.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.8.0-dev.20220514"
   }
 }
