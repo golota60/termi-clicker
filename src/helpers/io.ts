@@ -1,3 +1,8 @@
+import chalk from 'chalk';
+
+const defaultTerminalWidth = 50;
+const defualtTerminalHeight = 24;
+
 export const handleGracefulExit = () => {
   console.log('\nInterrupt signal detected! Closing gracefully...');
   process.exit();
@@ -10,10 +15,14 @@ export const handleGracefulExit = () => {
  *
  * @returns {string}
  */
-const addSpacesToMatchLength = (string: string, lengthToMatch: number) => {
+const addSpacesToMatchLength = (
+  string: string,
+  lengthToMatch: number,
+  endSign = ''
+) => {
   if (string.length >= lengthToMatch) return string;
   const lengthDiff = lengthToMatch - string.length;
-  return `${string}${new Array(lengthDiff).fill(' ').join('')}`;
+  return `${string}${new Array(lengthDiff).fill(' ').join('')}${endSign}`;
 };
 
 /**
@@ -35,16 +44,31 @@ const addSpacesToMatchLength = (string: string, lengthToMatch: number) => {
  *
  */
 export const equalizeStringArray = (
-  stringArr: Array<string>,
-  lineOffset = 0
+  stringArr: string | Array<string>,
+  options: {
+    startLineOffset?: number;
+    endLineOffset?: number;
+    endSign?: string;
+  } = {
+    startLineOffset: 0,
+    endLineOffset: 0,
+    endSign: '',
+  }
 ) => {
-  const longestArgLength = stringArr.reduce((acc, curr) => {
+  const { startLineOffset = 0, endLineOffset = 0, endSign = '' } = options;
+  const isArr = Array.isArray(stringArr);
+  const arg = isArr ? stringArr : stringArr.split('\n');
+  const longestArgLength = arg.reduce((acc, curr) => {
     const length = curr.length;
     return length > acc ? length : acc;
   }, 0);
-  return stringArr.map((line) => {
-    if (line.length < longestArgLength + lineOffset) {
-      return addSpacesToMatchLength(line, longestArgLength + lineOffset);
+  return arg.map((line) => {
+    if (line.length < longestArgLength + endLineOffset) {
+      return addSpacesToMatchLength(
+        new Array(startLineOffset).fill(' ').join('') + line,
+        startLineOffset + longestArgLength + endLineOffset,
+        endSign
+      );
     }
     return line;
   });
@@ -58,22 +82,107 @@ export const equalizeStringArray = (
  *
  * @returns {string}
  */
-export const getPrettyPrintableObject = (
+export const getTabledObject = (
   obj: Record<string, Record<string, any> | string>, // obj: {key: {keyToLog: val}}
-  keyToLog?: string
+  keysToLog?: Array<string>
 ) => {
-  const normalizedKeys = equalizeStringArray(Object.keys(obj), 1);
-  const normalizedValues = equalizeStringArray(
-    Object.values(obj).map((e) =>
-      keyToLog && typeof e !== 'string' ? e[keyToLog] : e
-    ) as Array<string>
+  const normalizedKeys = equalizeStringArray(['key', ...Object.keys(obj)], {
+    endLineOffset: 1,
+  });
+  const handleFunc = (elem: unknown) =>
+    typeof elem === 'function' ? elem() : elem;
+  const normalizedValues = keysToLog?.map((keyToLog) =>
+    equalizeStringArray([
+      keyToLog,
+      ...(Object.values(obj).map((e) =>
+        String(typeof e === 'object' ? handleFunc(e[keyToLog]) : handleFunc(e))
+      ) as Array<string>),
+    ])
   );
 
   // stitch those badboys together
   let stitched = '';
   for (let i = 0; i < normalizedKeys.length; i++) {
     stitched = `${stitched}
-    ${[normalizedKeys[i]]}: ${normalizedValues[i]}`;
+    ${[normalizedKeys[i]]}| ${normalizedValues?.map((e) => e[i]).join(' | ')}`;
   }
   return stitched;
+};
+
+export interface Message {
+  type: 'danger' | 'warning' | 'info';
+  content: string;
+}
+export const renderMessage = (message: Message): string => {
+  switch (message.type) {
+    case 'danger':
+      return chalk.red(message.content);
+    case 'warning':
+      return chalk.yellow(message.content);
+    case 'info':
+    default:
+      return chalk.blue(message.content);
+  }
+};
+
+export const wrapInBorder = (
+  content: string,
+  options?: {
+    borderSign?: string;
+    topBottomThickness?: number;
+    sideTickness?: number;
+  }
+) => {
+  const borderSignParsed = options?.borderSign || '#';
+  const topBottomThicknessParsed = options?.topBottomThickness || 1;
+  const sideThicknessParsed = options?.sideTickness || 1;
+  const terminalWidth = process.stdout.columns || defaultTerminalWidth;
+  const terminalHeight = process.stdout.rows || defualtTerminalHeight;
+
+  const topBorder = new Array(topBottomThicknessParsed).fill(
+    new Array(terminalWidth).fill(borderSignParsed).join('')
+  );
+
+  let newOutput: string[] = [
+    ...topBorder,
+    content
+      .split('\n')
+      .map(
+        (e) =>
+          new Array(sideThicknessParsed).fill(borderSignParsed).join('') + e
+      )
+      .join('\n'),
+    ...topBorder,
+  ];
+
+  return newOutput.join('\n');
+};
+
+/**
+ * @param cols - any number of strings you wish to be merged, where each row is separated by \n(newline)
+ * @returns - a string where all the columns are merged into a row
+ */
+export const joinColumns = (...cols: string[]) => {
+  // Splitting those creates a string[][] where the elements of nested arrays are lines
+  const colsSplit = cols.map((element) => element.split('\n'));
+
+  // Find the vertically longest argument
+  // Length of which is going the be the iterator on how many times we have to print a line
+  const verticallyLongestArg = colsSplit.reduce(
+    (acc, value) => (value.length > acc ? value.length : acc),
+    0
+  );
+  const argsNumber = cols.length;
+  const mergedArgs = [] as string[];
+  for (const [i] of [...new Array(verticallyLongestArg)].entries()) {
+    let nextLine = '';
+    for (const [i2] of [...new Array(argsNumber)].entries()) {
+      if (!colsSplit[i2][i]) continue;
+
+      nextLine += colsSplit[i2][i];
+    }
+
+    mergedArgs.push(nextLine);
+  }
+  return mergedArgs.join('\n');
 };

@@ -23,6 +23,7 @@
     "release": "standard-version"
   },
   "dependencies": {
+    "chalk": "^5.0.1",
     "log-update": "^5.0.1"
   },
   "devDependencies": {

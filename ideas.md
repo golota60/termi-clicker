@@ -9,6 +9,7 @@
 - replacable infrastructure names
 - help on delete click
 - should the game be time-based or tick based? go with tick for now, this allows us for speeding up the game easily
+- size prop that determines what info will show - for small terminals - also maybe dynamically adjust to terminal size?
 - app name/theme? maybe multiple themes that can be selected via a flag?
   - hackerclicker? with infra based around computers or hacking - this can work as an mvp
 

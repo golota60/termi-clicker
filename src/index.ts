@@ -1,14 +1,22 @@
 import process from 'process';
 import readline from 'readline';
 import logUpdate from 'log-update';
-import { getPrettyPrintableObject, handleGracefulExit } from './helpers/io.js';
+import {
+  equalizeStringArray,
+  getTabledObject,
+  handleGracefulExit,
+  joinColumns,
+  Message,
+  renderMessage,
+  wrapInBorder,
+} from './helpers/io.js';
 import { initialInfra } from './helpers/setup.js';
-import { initGameState } from './helpers/gameplay.js';
+import { GameState, getFreshGameState } from './helpers/gameplay.js';
 
 const mainKeyName = 'space';
 const shopButton = 's';
 //todo: load this when implementing saving
-let gameState = initGameState;
+let gameState = getFreshGameState();
 
 let stdin = process.stdin;
 readline.emitKeypressEvents(stdin);
@@ -18,19 +26,22 @@ stdin.setEncoding('utf-8');
 
 console.log(`The game is on! Click "${mainKeyName}" to start earning bobux\n`);
 
-let money = 0;
 let currKey: string;
-let debug: Record<string, any>;
+// let debug: Record<string, any>;
+
+let message: Message | undefined;
 stdin.on('keypress', function (key, a) {
-  const { sequence, name, ctrl, meta, shift } = a;
+  // after each action reset the message
+  message = undefined;
+  const { sequence, name } = a;
   currKey = name;
-  debug = a;
 
   const ctrlC = '\x03';
-  const ctrlX = '\x18';
-  const ctrlZ = '\x1A';
+  // const ctrlX = '\x18';
+  // const ctrlZ = '\x1A';
+
   if (name === mainKeyName) {
-    money += 1;
+    gameState = { ...gameState, money: gameState.money + 1 };
   }
   if (name === shopButton) {
     gameState = { ...gameState, mode: 'shop' };
@@ -38,6 +49,30 @@ stdin.on('keypress', function (key, a) {
 
   if (gameState.mode === 'shop') {
     if (name === 'x') gameState = { ...gameState, mode: 'main' };
+
+    Object.entries(initialInfra).forEach(([key, val]) => {
+      if (name === String(val.buyKey)) {
+        const cost = val.getCostForLevel(val.level);
+        if (gameState.money < cost) {
+          message = {
+            type: 'danger',
+            content: "You don't have enough money to buy that!",
+          };
+        } else {
+          gameState = {
+            ...gameState,
+            infrastructure: {
+              ...gameState.infrastructure,
+              [key]: {
+                ...gameState.infrastructure[key],
+                level: gameState.infrastructure[key].level + 1,
+              },
+            },
+            money: gameState.money - cost,
+          };
+        }
+      }
+    });
   }
 
   if (sequence === ctrlC) {
@@ -45,27 +80,63 @@ stdin.on('keypress', function (key, a) {
   }
 });
 
+const frames = ['-', '\\', '|', '/'];
+let index = 0;
+
+// min first col width
+const firstColWidth = new Array(60).fill(' ').join('');
+
 setInterval(() => {
+  const frame = frames[(index = ++index % frames.length)];
+  index > frames.length && (index = 0); //so that index doesn't get out of hand
+
+  const firstColumn = `${firstColWidth}
+  ${frame}
+
+  Your infrastructure: 
+  ${getTabledObject(gameState.infrastructure, ['level'])}
+
+  You pressed ${currKey} and you've got ${gameState.money} bobux
+
+
+  ${
+    gameState.mode === 'main' &&
+    `To open the shop, click the ${shopButton} button`
+  }
+
+
+  ${message ? message.content : ''}
+
+  ${frame}
+  `;
+  const secondColumn = `${
+    gameState.mode === 'shop' &&
+    `
+Here's the things you can buy: 
+${getTabledObject(gameState.infrastructure, [
+  'getCostForLevel',
+  'level',
+  'buyKey',
+])}
+
+Press 'x' to leave the shop
+`
+  }
+
+`;
+
   logUpdate(
-    `
-    Your infra: ${Object.entries(initialInfra).map(
-      ([key, value]) => `${key}: ${value.value}`
-    )}
-
-    You pressed ${currKey} and you've got ${money} bobux
-
-
-    To open the shop, click the ${shopButton} button
-    ${
-      gameState.mode === 'shop' &&
-      `
-    Here's the things you can buy: 
-    ${getPrettyPrintableObject(initialInfra, 'cost')}
-
-    Press 'x' to leave the shop
-    `
-    }
-
-    ${JSON.stringify(debug)}`
+    wrapInBorder(
+      joinColumns(
+        equalizeStringArray(firstColumn, {
+          endLineOffset: 1,
+          endSign: '#',
+        }).join('\n'),
+        equalizeStringArray(secondColumn, {
+          endLineOffset: 1,
+          endSign: '#',
+        }).join('\n')
+      )
+    )
   );
 }, 60);
