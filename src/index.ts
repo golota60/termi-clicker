@@ -86,6 +86,7 @@ let index = 0;
 // min first col width
 const firstColWidth = new Array(60).fill(' ').join('');
 
+// output loop
 setInterval(() => {
   const frame = frames[(index = ++index % frames.length)];
   index > frames.length && (index = 0); //so that index doesn't get out of hand
@@ -96,34 +97,36 @@ setInterval(() => {
   Your infrastructure: 
   ${getTabledObject(gameState.infrastructure, ['level'])}
 
-  You pressed ${currKey} and you've got ${gameState.money} bobux
-
-
   ${
     gameState.mode === 'main' &&
     `To open the shop, click the ${shopButton} button`
   }
 
 
-  ${message ? message.content : ''}
-
   ${frame}
   `;
-  const secondColumn = `${
-    gameState.mode === 'shop' &&
-    `
-Here's the things you can buy: 
-${getTabledObject(gameState.infrastructure, [
-  'getCostForLevel',
-  'level',
-  'buyKey',
-])}
 
-Press 'x' to leave the shop
-`
-  }
-
+  const statusColumn = `
+  Money: ${gameState.money}
+  Money per second:
+  Last key: ${currKey}
 `;
+
+  //   const secondColumn = `${
+  //     gameState.mode === 'shop' &&
+  //     `
+  // Here's the things you can buy:
+  // ${getTabledObject(gameState.infrastructure, [
+  //   'getCostForLevel',
+  //   'level',
+  //   'buyKey',
+  // ])}
+
+  // Press 'x' to leave the shop
+  // `
+  //   }
+
+  // `;
 
   logUpdate(
     wrapInBorder(
@@ -132,11 +135,11 @@ Press 'x' to leave the shop
           endLineOffset: 1,
           endSign: '#',
         }).join('\n'),
-        equalizeStringArray(secondColumn, {
+        equalizeStringArray(statusColumn, {
           endLineOffset: 1,
-          endSign: '#',
         }).join('\n')
       )
-    )
+    ),
+    message ? renderMessage(message) : ''
   );
 }, 60);
