@@ -49,37 +49,36 @@ stdin.on('keypress', function (key, a) {
   if (name === mainKeyName) {
     updateGameState({ ...gameState, money: gameState.money + 1 });
   }
-  if (name === shopButton) {
-    updateGameState({ ...gameState, mode: 'shop' });
-  }
+  // if (name === shopButton) {
+  //   updateGameState({ ...gameState, mode: 'shop' });
+  // }
 
-  if (gameState.mode === 'shop') {
-    if (name === 'x') updateGameState({ ...gameState, mode: 'main' });
+  // if (gameState.mode === 'shop') {
+  // if (name === 'x') updateGameState({ ...gameState, mode: 'main' });
 
-    Object.entries(initialInfra).forEach(([key, val]) => {
-      if (name === String(val.buyKey)) {
-        const cost = val.getCostForLevel();
-        if (gameState.money < cost) {
-          message = {
-            type: 'danger',
-            content: "You don't have enough money to buy that!",
-          };
-        } else {
-          updateGameState({
-            ...gameState,
-            infrastructure: {
-              ...gameState.infrastructure,
-              [key]: {
-                ...gameState.infrastructure[key],
-                level: gameState.infrastructure[key].level + 1,
-              },
+  Object.entries(initialInfra).forEach(([key, val]) => {
+    if (name === String(val.buyKey)) {
+      const cost = val.getCostForLevel();
+      if (gameState.money < cost) {
+        message = {
+          type: 'danger',
+          content: "You don't have enough money to buy that!",
+        };
+      } else {
+        updateGameState({
+          ...gameState,
+          infrastructure: {
+            ...gameState.infrastructure,
+            [key]: {
+              ...gameState.infrastructure[key],
+              level: gameState.infrastructure[key].level + 1,
             },
-            money: gameState.money - cost,
-          });
-        }
+          },
+          money: gameState.money - cost,
+        });
       }
-    });
-  }
+    }
+  });
 
   if (sequence === ctrlC) {
     handleGracefulExit();
@@ -105,8 +104,14 @@ setInterval(() => {
   const firstColumn = `${firstColWidth}
   ${frame}
 
-  Your infrastructure: 
-  ${getTabledObject(gameState.infrastructure, ['level'])}
+  Your infrastructure:
+  ${getTabledObject(gameState.infrastructure, [
+    'getCostForLevel',
+    'getMoneyPerSec',
+    'getPercentage',
+    'level',
+    'buyKey',
+  ])}
 
   ${
     gameState.mode === 'main' &&
@@ -123,22 +128,15 @@ setInterval(() => {
   Last key: ${currKey}
 `;
 
-  const secondColumn = `${
-    gameState.mode === 'shop' &&
-    `
-  Here's the things you can buy:
-  ${getTabledObject(gameState.infrastructure, [
-    'getCostForLevel',
-    'getMoneyPerSec',
-    'level',
-    'buyKey',
-  ])}
+  // const secondColumn = `${
+  //   gameState.mode === 'shop' &&
+  //   `
 
-  Press 'x' to leave the shop
-  `
-  }
+  // Press 'x' to leave the shop
+  // `
+  // }
 
-  `;
+  // `;
 
   logUpdate(
     wrapInBorder(
@@ -148,9 +146,6 @@ setInterval(() => {
           endSign: '#',
         }).join('\n'),
         equalizeStringArray(statusColumn, {
-          endLineOffset: 1,
-        }).join('\n'),
-        equalizeStringArray(secondColumn, {
           endLineOffset: 1,
         }).join('\n')
       )

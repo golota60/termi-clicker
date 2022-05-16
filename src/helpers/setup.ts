@@ -1,4 +1,9 @@
-import { AbilitiesState, gameState, InfrastructureState } from './gameplay.js';
+import {
+  AbilitiesState,
+  calcMoneyPerSec,
+  gameState,
+  InfrastructureState,
+} from './gameplay.js';
 
 // click upgrades
 export const initialAbilities: AbilitiesState = {
@@ -28,6 +33,14 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure.hackers.level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
+    getPercentage: () => {
+      const base = gameState.infrastructure.hackers;
+      const ratio = Math.floor(
+        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
+      );
+      if (isNaN(ratio)) return 0;
+      return ratio;
+    },
     buyKey: 1,
     // resolver: (money: number) => {
 
@@ -41,6 +54,14 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure['debian-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
+    getPercentage: () => {
+      const base = gameState.infrastructure['debian-linux-instances'];
+      const ratio = Math.floor(
+        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
+      );
+      if (isNaN(ratio)) return 0;
+      return ratio;
+    },
     buyKey: 2,
   },
   botnets: {
@@ -52,6 +73,14 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure.botnets.level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
+    getPercentage: () => {
+      const base = gameState.infrastructure.botnets;
+      const ratio = Math.floor(
+        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
+      );
+      if (isNaN(ratio)) return 0;
+      return ratio;
+    },
     buyKey: 3,
   },
   'arch-linux-instances': {
@@ -62,6 +91,14 @@ export const initialInfra: InfrastructureState = {
     getMoneyPerSec: () => {
       const base = gameState.infrastructure['arch-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
+    },
+    getPercentage: () => {
+      const base = gameState.infrastructure['arch-linux-instances'];
+      const ratio = Math.floor(
+        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
+      );
+      if (isNaN(ratio)) return 0;
+      return ratio;
     },
     buyKey: 4,
   },

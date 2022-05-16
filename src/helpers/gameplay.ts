@@ -13,6 +13,7 @@ export interface Infrastructure {
 
   getCostForLevel: () => number;
   getMoneyPerSec: () => number;
+  getPercentage: () => number;
   buyKey: number;
 
   //todo: loadcost, loadmoneypersec?
