@@ -172,14 +172,19 @@ export const joinColumns = (...cols: string[]) => {
     (acc, value) => (value.length > acc ? value.length : acc),
     0
   );
+
+  const colsHeightMatched = colsSplit.map((elem) => [
+    ...elem,
+    ...new Array(verticallyLongestArg - elem.length).fill(' '),
+  ]);
   const argsNumber = cols.length;
   const mergedArgs = [] as string[];
   for (const [i] of [...new Array(verticallyLongestArg)].entries()) {
     let nextLine = '';
     for (const [i2] of [...new Array(argsNumber)].entries()) {
-      if (!colsSplit[i2][i]) continue;
+      if (!colsHeightMatched[i2][i]) continue;
 
-      nextLine += colsSplit[i2][i];
+      nextLine += colsHeightMatched[i2][i];
     }
 
     mergedArgs.push(nextLine);

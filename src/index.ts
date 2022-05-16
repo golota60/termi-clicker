@@ -11,12 +11,18 @@ import {
   wrapInBorder,
 } from './helpers/io.js';
 import { initialInfra } from './helpers/setup.js';
-import { GameState, getFreshGameState } from './helpers/gameplay.js';
+import {
+  gameState,
+  updateGameState,
+  setupGame,
+  calcMoneyPerSec,
+} from './helpers/gameplay.js';
 
 const mainKeyName = 'space';
 const shopButton = 's';
+
 //todo: load this when implementing saving
-let gameState = getFreshGameState();
+setupGame();
 
 let stdin = process.stdin;
 readline.emitKeypressEvents(stdin);
@@ -41,25 +47,25 @@ stdin.on('keypress', function (key, a) {
   // const ctrlZ = '\x1A';
 
   if (name === mainKeyName) {
-    gameState = { ...gameState, money: gameState.money + 1 };
+    updateGameState({ ...gameState, money: gameState.money + 1 });
   }
   if (name === shopButton) {
-    gameState = { ...gameState, mode: 'shop' };
+    updateGameState({ ...gameState, mode: 'shop' });
   }
 
   if (gameState.mode === 'shop') {
-    if (name === 'x') gameState = { ...gameState, mode: 'main' };
+    if (name === 'x') updateGameState({ ...gameState, mode: 'main' });
 
     Object.entries(initialInfra).forEach(([key, val]) => {
       if (name === String(val.buyKey)) {
-        const cost = val.getCostForLevel(val.level);
+        const cost = val.getCostForLevel();
         if (gameState.money < cost) {
           message = {
             type: 'danger',
             content: "You don't have enough money to buy that!",
           };
         } else {
-          gameState = {
+          updateGameState({
             ...gameState,
             infrastructure: {
               ...gameState.infrastructure,
@@ -69,7 +75,7 @@ stdin.on('keypress', function (key, a) {
               },
             },
             money: gameState.money - cost,
-          };
+          });
         }
       }
     });
@@ -85,6 +91,11 @@ let index = 0;
 
 // min first col width
 const firstColWidth = new Array(60).fill(' ').join('');
+
+setInterval(() => {
+  const moneyPerSec = calcMoneyPerSec();
+  updateGameState({ ...gameState, money: gameState.money + moneyPerSec });
+}, 1000);
 
 // output loop
 setInterval(() => {
@@ -108,25 +119,26 @@ setInterval(() => {
 
   const statusColumn = `
   Money: ${gameState.money}
-  Money per second:
+  Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
 `;
 
-  //   const secondColumn = `${
-  //     gameState.mode === 'shop' &&
-  //     `
-  // Here's the things you can buy:
-  // ${getTabledObject(gameState.infrastructure, [
-  //   'getCostForLevel',
-  //   'level',
-  //   'buyKey',
-  // ])}
+  const secondColumn = `${
+    gameState.mode === 'shop' &&
+    `
+  Here's the things you can buy:
+  ${getTabledObject(gameState.infrastructure, [
+    'getCostForLevel',
+    'getMoneyPerSec',
+    'level',
+    'buyKey',
+  ])}
 
-  // Press 'x' to leave the shop
-  // `
-  //   }
+  Press 'x' to leave the shop
+  `
+  }
 
-  // `;
+  `;
 
   logUpdate(
     wrapInBorder(
@@ -136,6 +148,9 @@ setInterval(() => {
           endSign: '#',
         }).join('\n'),
         equalizeStringArray(statusColumn, {
+          endLineOffset: 1,
+        }).join('\n'),
+        equalizeStringArray(secondColumn, {
           endLineOffset: 1,
         }).join('\n')
       )
