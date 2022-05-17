@@ -1,3 +1,4 @@
+import { ChalkInstance } from 'chalk';
 import { initialAbilities, initialInfra } from './setup.js';
 
 //TODO: convert those to funs which load save states when that is implemented
@@ -14,6 +15,7 @@ export interface Infrastructure {
   getCostForLevel: () => number;
   getMoneyPerSec: () => number;
   getPercentage: () => number;
+  getColor: () => ChalkInstance;
   buyKey: number;
 
   //todo: loadcost, loadmoneypersec?

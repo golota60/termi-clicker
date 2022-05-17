@@ -101,8 +101,7 @@ setInterval(() => {
   const frame = frames[(index = ++index % frames.length)];
   index > frames.length && (index = 0); //so that index doesn't get out of hand
 
-  const firstColumn = `${firstColWidth}
-  ${frame}
+  const firstRow = `${firstColWidth}
 
   Your infrastructure:
   ${getTabledObject(gameState.infrastructure, [
@@ -118,38 +117,22 @@ setInterval(() => {
     `To open the shop, click the ${shopButton} button`
   }
 
-
-  ${frame}
   `;
 
-  const statusColumn = `
+  const statusRow = `
   Money: ${gameState.money}
   Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
 `;
 
-  // const secondColumn = `${
-  //   gameState.mode === 'shop' &&
-  //   `
-
-  // Press 'x' to leave the shop
-  // `
-  // }
-
-  // `;
-
   logUpdate(
-    wrapInBorder(
-      joinColumns(
-        equalizeStringArray(firstColumn, {
-          endLineOffset: 1,
-          endSign: '#',
-        }).join('\n'),
-        equalizeStringArray(statusColumn, {
-          endLineOffset: 1,
-        }).join('\n')
-      )
-    ),
+    wrapInBorder(`
+      ${equalizeStringArray(firstRow, {
+        endLineOffset: 1,
+      }).join('\n')}
+      ${equalizeStringArray(statusRow, {
+        endLineOffset: 1,
+      }).join('\n')}`),
     message ? renderMessage(message) : ''
   );
 }, 60);

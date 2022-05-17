@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { gameState } from './gameplay.js';
 
 const defaultTerminalWidth = 50;
 const defualtTerminalHeight = 24;
@@ -86,8 +87,9 @@ export const getTabledObject = (
   obj: Record<string, Record<string, any> | string>, // obj: {key: {keyToLog: val}}
   keysToLog?: Array<string>
 ) => {
+  const endOffset = 1;
   const normalizedKeys = equalizeStringArray(['key', ...Object.keys(obj)], {
-    endLineOffset: 1,
+    endLineOffset: endOffset,
   });
   const handleFunc = (elem: unknown) =>
     typeof elem === 'function' ? elem() : elem;
@@ -102,10 +104,15 @@ export const getTabledObject = (
 
   // stitch those badboys together
   let stitched = '';
-  for (let i = 0; i < normalizedKeys.length; i++) {
+  for (let i = 1; i < normalizedKeys.length; i++) {
     stitched = `${stitched}
-    ${[normalizedKeys[i]]}| ${normalizedValues?.map((e) => e[i]).join(' | ')}`;
+    ${gameState.infrastructure?.[normalizedKeys[i].trim()].getColor()(
+      `${[normalizedKeys[i]]}| ${normalizedValues
+        ?.map((e) => e[i])
+        .join(' | ')}`
+    )}`;
   }
+
   return stitched;
 };
 

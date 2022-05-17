@@ -1,7 +1,9 @@
+import chalk from 'chalk';
 import {
   AbilitiesState,
   calcMoneyPerSec,
   gameState,
+  Infrastructure,
   InfrastructureState,
 } from './gameplay.js';
 
@@ -21,6 +23,19 @@ export const initialAbilities: AbilitiesState = {
   },
 };
 
+const genericGetColor = (base: Infrastructure) => {
+  if (gameState.money >= base.getCostForLevel()) {
+    return chalk.green;
+  }
+  return chalk.red;
+};
+
+const genericGetPercentage = (base: Infrastructure) => {
+  const ratio = Math.floor((base.getMoneyPerSec() / calcMoneyPerSec()) * 100);
+  if (isNaN(ratio)) return 0;
+  return ratio;
+};
+
 // infrastructure upgrades(money over time)
 export const initialInfra: InfrastructureState = {
   hackers: {
@@ -33,14 +48,8 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure.hackers.level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
-    getPercentage: () => {
-      const base = gameState.infrastructure.hackers;
-      const ratio = Math.floor(
-        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
-      );
-      if (isNaN(ratio)) return 0;
-      return ratio;
-    },
+    getPercentage: () => genericGetPercentage(gameState.infrastructure.hackers),
+    getColor: () => genericGetColor(gameState?.infrastructure?.hackers),
     buyKey: 1,
     // resolver: (money: number) => {
 
@@ -54,14 +63,10 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure['debian-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
-    getPercentage: () => {
-      const base = gameState.infrastructure['debian-linux-instances'];
-      const ratio = Math.floor(
-        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
-      );
-      if (isNaN(ratio)) return 0;
-      return ratio;
-    },
+    getPercentage: () =>
+      genericGetPercentage(gameState.infrastructure['debian-linux-instances']),
+    getColor: () =>
+      genericGetColor(gameState?.infrastructure?.['debian-linux-instances']),
     buyKey: 2,
   },
   botnets: {
@@ -73,14 +78,8 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure.botnets.level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
-    getPercentage: () => {
-      const base = gameState.infrastructure.botnets;
-      const ratio = Math.floor(
-        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
-      );
-      if (isNaN(ratio)) return 0;
-      return ratio;
-    },
+    getPercentage: () => genericGetPercentage(gameState.infrastructure.botnets),
+    getColor: () => genericGetColor(gameState?.infrastructure?.botnets),
     buyKey: 3,
   },
   'arch-linux-instances': {
@@ -92,14 +91,10 @@ export const initialInfra: InfrastructureState = {
       const base = gameState.infrastructure['arch-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
     },
-    getPercentage: () => {
-      const base = gameState.infrastructure['arch-linux-instances'];
-      const ratio = Math.floor(
-        (base.getMoneyPerSec() / calcMoneyPerSec()) * 100
-      );
-      if (isNaN(ratio)) return 0;
-      return ratio;
-    },
+    getPercentage: () =>
+      genericGetPercentage(gameState.infrastructure['arch-linux-instances']),
+    getColor: () =>
+      genericGetColor(gameState?.infrastructure?.['arch-linux-instances']),
     buyKey: 4,
   },
 };
