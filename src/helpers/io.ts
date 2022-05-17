@@ -85,19 +85,19 @@ export const equalizeStringArray = (
  */
 export const getTabledObject = (
   obj: Record<string, Record<string, any> | string>, // obj: {key: {keyToLog: val}}
-  keysToLog?: Array<string>
+  keysToLog?: Array<Array<string>>
 ) => {
   const endOffset = 1;
-  const normalizedKeys = equalizeStringArray(['key', ...Object.keys(obj)], {
+  const normalizedKeys = equalizeStringArray(['Name', ...Object.keys(obj)], {
     endLineOffset: endOffset,
   });
   const handleFunc = (elem: unknown) =>
     typeof elem === 'function' ? elem() : elem;
-  const normalizedValues = keysToLog?.map((keyToLog) =>
+  const normalizedValues = keysToLog?.map(([fieldName, displayName]) =>
     equalizeStringArray([
-      keyToLog,
+      displayName,
       ...(Object.values(obj).map((e) =>
-        String(typeof e === 'object' ? handleFunc(e[keyToLog]) : handleFunc(e))
+        String(typeof e === 'object' ? handleFunc(e[fieldName]) : handleFunc(e))
       ) as Array<string>),
     ])
   );

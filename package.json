@@ -1,7 +1,7 @@
 {
   "name": "termi-clicker",
   "author": "Szymon Wiszczuk<golota60@gmail.com>",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "exports": "./lib/index.js",
   "type": "module",
   "license": "MIT",

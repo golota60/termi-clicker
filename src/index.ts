@@ -112,11 +112,11 @@ setInterval(() => {
 
   Your infrastructure:
   ${getTabledObject(gameState.infrastructure, [
-    'getCost',
-    'getMoneyPerSec',
-    'getPercentage',
-    'level',
-    'buyKey',
+    ['getCost', 'Price'],
+    ['getMoneyPerSec', 'Money per second'],
+    ['getPercentage','% of all income'],
+    ['level', 'Level'],
+    ['buyKey', 'Upgrade key'],
   ])}
 
   ${
