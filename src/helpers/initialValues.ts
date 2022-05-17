@@ -24,7 +24,7 @@ export const initialAbilities: AbilitiesState = {
 };
 
 const genericGetColor = (base: Infrastructure) => {
-  if (gameState.money >= base.getCost() * gameState.bulkMode) {
+  if (gameState.money >= base.getCost()) {
     return chalk.green;
   }
   return chalk.red;
@@ -40,10 +40,12 @@ const genericGetPercentage = (base: Infrastructure) => {
 export const initialInfra: InfrastructureState = {
   hackers: {
     level: 0,
+    alias: 'Hackers',
     desc: 'Other hackers working for you',
 
     getCost: () =>
-      Math.floor((1 + gameState.infrastructure.hackers.level * 0.2) * 20), //getGameState()!.state!.infrastructure!.hackers.level, //each level is 20% more expensive than the last
+      Math.floor((1 + gameState.infrastructure.hackers.level * 0.2) * 20) *
+      gameState.bulkMode,
     getMoneyPerSec: () => {
       const base = gameState.infrastructure.hackers.level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
@@ -57,8 +59,9 @@ export const initialInfra: InfrastructureState = {
   },
   'debian-linux-instances': {
     level: 0,
+    alias: 'Debian Linux Instances',
     desc: 'Your Debian linux instances',
-    getCost: () => 100,
+    getCost: () => 100 * gameState.bulkMode,
     getMoneyPerSec: () => {
       const base = gameState.infrastructure['debian-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
@@ -71,8 +74,9 @@ export const initialInfra: InfrastructureState = {
   },
   botnets: {
     level: 0,
+    alias: 'Botnets',
     desc: 'Botnets you control',
-    getCost: () => 200,
+    getCost: () => 200 * gameState.bulkMode,
 
     getMoneyPerSec: () => {
       const base = gameState.infrastructure.botnets.level;
@@ -84,8 +88,9 @@ export const initialInfra: InfrastructureState = {
   },
   'arch-linux-instances': {
     level: 0,
+    alias: 'Arch Linux Instances',
     desc: 'Your Arch linux instances(you use arch btw)',
-    getCost: () => 500,
+    getCost: () => 500 * gameState.bulkMode,
 
     getMoneyPerSec: () => {
       const base = gameState.infrastructure['arch-linux-instances'].level;

@@ -83,14 +83,16 @@ export const equalizeStringArray = (
  *
  * @returns {string}
  */
-export const getTabledObject = (
-  obj: Record<string, Record<string, any> | string>, // obj: {key: {keyToLog: val}}
+export const getTabledInfra = (
+  obj: Record<string, Record<string, any>>, // obj: {key: {keyToLog: val}}
   keysToLog?: Array<Array<string>>
 ) => {
   const endOffset = 1;
-  const normalizedKeys = equalizeStringArray(['Name', ...Object.keys(obj)], {
-    endLineOffset: endOffset,
-  });
+  const normalizedKeys = ['Name', ...Object.keys(obj)];
+  const displayedKeys = equalizeStringArray(
+    ['Name', ...Object.values(obj).map((e) => e?.alias || e)],
+    { endLineOffset: endOffset }
+  );
   const handleFunc = (elem: unknown) =>
     typeof elem === 'function' ? elem() : elem;
   const normalizedValues = keysToLog?.map(([fieldName, displayName]) =>
@@ -103,15 +105,13 @@ export const getTabledObject = (
   );
 
   // stitch those badboys together
-  let stitched = `  ${normalizedKeys[0]}| ${normalizedValues
+  let stitched = `  ${displayedKeys[0]}| ${normalizedValues
     ?.map((e) => e[0])
     .join(' | ')}`;
-  for (let i = 1; i < normalizedKeys.length; i++) {
+  for (let i = 1; i < displayedKeys.length; i++) {
     stitched = `${stitched}
-    ${gameState.infrastructure?.[normalizedKeys[i].trim()].getColor()(
-      `${[normalizedKeys[i]]}| ${normalizedValues
-        ?.map((e) => e[i])
-        .join(' | ')}`
+    ${gameState.infrastructure?.[normalizedKeys[i]].getColor()(
+      `${[displayedKeys[i]]}| ${normalizedValues?.map((e) => e[i]).join(' | ')}`
     )}`;
   }
 

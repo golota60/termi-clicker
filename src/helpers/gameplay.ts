@@ -16,6 +16,7 @@ export interface Infrastructure {
   getMoneyPerSec: () => number;
   getPercentage: () => number;
   getColor: () => ChalkInstance;
+  alias: string; // How the value should be displayed
   buyKey: number;
 
   //todo: loadcost, loadmoneypersec?

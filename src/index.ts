@@ -3,7 +3,7 @@ import readline from 'readline';
 import logUpdate from 'log-update';
 import {
   equalizeStringArray,
-  getTabledObject,
+  getTabledInfra,
   handleGracefulExit,
   joinColumns,
   Message,
@@ -65,7 +65,7 @@ stdin.on('keypress', function (key, a) {
 
   Object.entries(initialInfra).forEach(([key, val]) => {
     if (name === String(val.buyKey)) {
-      const cost = val.getCost() * gameState.bulkMode;
+      const cost = val.getCost();
       if (gameState.money < cost) {
         message = {
           type: 'danger',
@@ -78,7 +78,8 @@ stdin.on('keypress', function (key, a) {
             ...gameState.infrastructure,
             [key]: {
               ...gameState.infrastructure[key],
-              level: gameState.infrastructure[key].level + 1,
+              level:
+                gameState.infrastructure[key].level + 1 * gameState.bulkMode,
             },
           },
           money: gameState.money - cost,
@@ -111,12 +112,12 @@ setInterval(() => {
   const firstRow = `${firstColWidth}
 
   Your infrastructure:
-  ${getTabledObject(gameState.infrastructure, [
+  ${getTabledInfra(gameState.infrastructure, [
     ['getCost', 'Price'],
-    ['getMoneyPerSec', 'Money per second'],
-    ['getPercentage','% of all income'],
-    ['level', 'Level'],
     ['buyKey', 'Upgrade key'],
+    ['getMoneyPerSec', '$ per sec'],
+    ['getPercentage', '% of all income'],
+    ['level', 'Level'],
   ])}
 
   ${
