@@ -103,7 +103,9 @@ export const getTabledObject = (
   );
 
   // stitch those badboys together
-  let stitched = '';
+  let stitched = `  ${normalizedKeys[0]}| ${normalizedValues
+    ?.map((e) => e[0])
+    .join(' | ')}`;
   for (let i = 1; i < normalizedKeys.length; i++) {
     stitched = `${stitched}
     ${gameState.infrastructure?.[normalizedKeys[i].trim()].getColor()(

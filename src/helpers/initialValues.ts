@@ -24,7 +24,7 @@ export const initialAbilities: AbilitiesState = {
 };
 
 const genericGetColor = (base: Infrastructure) => {
-  if (gameState.money >= base.getCostForLevel()) {
+  if (gameState.money >= base.getCost() * gameState.bulkMode) {
     return chalk.green;
   }
   return chalk.red;
@@ -42,7 +42,7 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     desc: 'Other hackers working for you',
 
-    getCostForLevel: () =>
+    getCost: () =>
       Math.floor((1 + gameState.infrastructure.hackers.level * 0.2) * 20), //getGameState()!.state!.infrastructure!.hackers.level, //each level is 20% more expensive than the last
     getMoneyPerSec: () => {
       const base = gameState.infrastructure.hackers.level;
@@ -58,7 +58,7 @@ export const initialInfra: InfrastructureState = {
   'debian-linux-instances': {
     level: 0,
     desc: 'Your Debian linux instances',
-    getCostForLevel: () => 100,
+    getCost: () => 100,
     getMoneyPerSec: () => {
       const base = gameState.infrastructure['debian-linux-instances'].level;
       return base ? Math.floor((1 + base * 0.2) * 25) : 0;
@@ -72,7 +72,7 @@ export const initialInfra: InfrastructureState = {
   botnets: {
     level: 0,
     desc: 'Botnets you control',
-    getCostForLevel: () => 200,
+    getCost: () => 200,
 
     getMoneyPerSec: () => {
       const base = gameState.infrastructure.botnets.level;
@@ -85,7 +85,7 @@ export const initialInfra: InfrastructureState = {
   'arch-linux-instances': {
     level: 0,
     desc: 'Your Arch linux instances(you use arch btw)',
-    getCostForLevel: () => 500,
+    getCost: () => 500,
 
     getMoneyPerSec: () => {
       const base = gameState.infrastructure['arch-linux-instances'].level;

@@ -1,5 +1,5 @@
-import { ChalkInstance } from 'chalk';
-import { initialAbilities, initialInfra } from './setup.js';
+import chalk, { ChalkInstance } from 'chalk';
+import { initialAbilities, initialInfra } from './initialValues.js';
 
 //TODO: convert those to funs which load save states when that is implemented
 export interface Ability {
@@ -12,7 +12,7 @@ export interface Infrastructure {
   level: number;
   desc: string;
 
-  getCostForLevel: () => number;
+  getCost: () => number;
   getMoneyPerSec: () => number;
   getPercentage: () => number;
   getColor: () => ChalkInstance;
@@ -21,19 +21,16 @@ export interface Infrastructure {
   //todo: loadcost, loadmoneypersec?
 }
 export type InfrastructureState = Record<string, Infrastructure>;
+
+export const bulkModeState = [1, 10, 100] as const;
+export type BulkModeType = typeof bulkModeState[number];
 export interface GameState {
   version: string | undefined;
   mode: 'main' | 'shop';
   infrastructure: InfrastructureState;
   abilities: AbilitiesState;
   money: number;
-}
-export interface GameStateNullable {
-  version?: string | undefined;
-  mode?: 'main' | 'shop';
-  infrastructure?: InfrastructureState;
-  abilities?: AbilitiesState;
-  money?: number;
+  bulkMode: BulkModeType;
 }
 
 export const getFreshGameState = (): GameState => ({
@@ -42,6 +39,7 @@ export const getFreshGameState = (): GameState => ({
   money: 0,
   infrastructure: initialInfra,
   abilities: initialAbilities,
+  bulkMode: 1,
 });
 
 // This can't be a getter cause we need the exact reference
@@ -64,8 +62,34 @@ export const calcMoneyPerSec = () => {
   return Math.floor(sum);
 };
 
-// export const updateGameStateField = (
-//   gameState: GameState,
-//   field: keyof GameState,
-//   newValue: GameState[keyof GameState]
-// ) => ({ ...gameState, [field]: newValue });
+export const swapBulkMode = () => {
+  updateGameState({
+    ...gameState,
+    bulkMode: getNextState<typeof gameState.bulkMode>(
+      gameState.bulkMode,
+      bulkModeState
+    ),
+  });
+};
+
+/** ---------------------------- */
+/** Simple state machine */
+const getNextState = <T>(
+  state: T,
+  possibleStates: Readonly<Array<T>> | Array<T>
+) => {
+  const indexOfPrev = possibleStates.indexOf(state);
+  const nextItem = possibleStates[indexOfPrev + 1] || possibleStates[0];
+  return nextItem;
+};
+export const renderActiveState = <T>(
+  state: T,
+  possibleStates: Readonly<Array<T>> | Array<T>,
+  options = { activeRenderer: chalk.bgWhite, passiveRenderer: (e: any) => e }
+) => {
+  const { activeRenderer, passiveRenderer } = options;
+  return possibleStates
+    .map((e) => (e === state ? activeRenderer(e) : passiveRenderer(e)))
+    .join(' ');
+};
+/** ---------------------------- */

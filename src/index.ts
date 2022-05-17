@@ -10,13 +10,17 @@ import {
   renderMessage,
   wrapInBorder,
 } from './helpers/io.js';
-import { initialInfra } from './helpers/setup.js';
+import { initialInfra } from './helpers/initialValues.js';
 import {
   gameState,
   updateGameState,
   setupGame,
   calcMoneyPerSec,
+  renderActiveState,
+  bulkModeState,
+  swapBulkMode,
 } from './helpers/gameplay.js';
+import chalk from 'chalk';
 
 const mainKeyName = 'space';
 const shopButton = 's';
@@ -46,6 +50,9 @@ stdin.on('keypress', function (key, a) {
   // const ctrlX = '\x18';
   // const ctrlZ = '\x1A';
 
+  if (name === 't') {
+    swapBulkMode();
+  }
   if (name === mainKeyName) {
     updateGameState({ ...gameState, money: gameState.money + 1 });
   }
@@ -58,7 +65,7 @@ stdin.on('keypress', function (key, a) {
 
   Object.entries(initialInfra).forEach(([key, val]) => {
     if (name === String(val.buyKey)) {
-      const cost = val.getCostForLevel();
+      const cost = val.getCost() * gameState.bulkMode;
       if (gameState.money < cost) {
         message = {
           type: 'danger',
@@ -105,7 +112,7 @@ setInterval(() => {
 
   Your infrastructure:
   ${getTabledObject(gameState.infrastructure, [
-    'getCostForLevel',
+    'getCost',
     'getMoneyPerSec',
     'getPercentage',
     'level',
@@ -123,6 +130,10 @@ setInterval(() => {
   Money: ${gameState.money}
   Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
+  Current buying amount(click 't' to switch): ${renderActiveState(
+    gameState.bulkMode,
+    bulkModeState
+  )}
 `;
 
   logUpdate(
