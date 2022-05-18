@@ -76,7 +76,7 @@ export const equalizeStringArray = (
 };
 
 /**
- * Get an object to pretty print an object(0/1 level deep)
+ * Get an object to pretty print an infra object(0/1 level deep)
  *
  * @param {object} obj - object to return ready to be pretty printed
  * @param {string} keyToLog - the key of the value to be pretty printed. If not provided will attempt to use value itself as a string.

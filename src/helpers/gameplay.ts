@@ -1,12 +1,12 @@
 import chalk, { ChalkInstance } from 'chalk';
-import { initialAbilities, initialInfra } from './initialValues.js';
+import { initialInfra, upgradesInOrder } from './initialValues.js';
 
 //TODO: convert those to funs which load save states when that is implemented
-export interface Ability {
+export interface Upgrade {
   level: number;
   desc: string;
 }
-export type AbilitiesState = Record<string, Ability>;
+export type UpgradesState = Record<string, Upgrade>;
 
 export interface Infrastructure {
   level: number;
@@ -18,6 +18,7 @@ export interface Infrastructure {
   getColor: () => ChalkInstance;
   alias: string; // How the value should be displayed
   buyKey: number;
+  multiplier: number;
 
   //todo: loadcost, loadmoneypersec?
 }
@@ -29,9 +30,11 @@ export interface GameState {
   version: string | undefined;
   mode: 'main' | 'shop';
   infrastructure: InfrastructureState;
-  abilities: AbilitiesState;
   money: number;
   bulkMode: BulkModeType;
+  clickPower: number;
+  moneyPerSecUpgrade: number;
+  upgradesBought: Array<any>;
 }
 
 export const getFreshGameState = (): GameState => ({
@@ -39,8 +42,10 @@ export const getFreshGameState = (): GameState => ({
   mode: 'main',
   money: 0,
   infrastructure: initialInfra,
-  abilities: initialAbilities,
   bulkMode: 1,
+  clickPower: 1,
+  moneyPerSecUpgrade: 1,
+  upgradesBought: [],
 });
 
 // This can't be a getter cause we need the exact reference
@@ -61,6 +66,21 @@ export const calcMoneyPerSec = () => {
   );
   const sum = moneyPerSecForEachInfra.reduce((acc, elem) => acc + elem, 0);
   return Math.floor(sum);
+};
+
+export const getNextUpgrade = () => {
+  return upgradesInOrder?.[gameState.upgradesBought.length] || undefined;
+};
+export const buyUpgrade = () => {
+  const next = getNextUpgrade();
+  if (next) {
+    updateGameState({
+      ...gameState,
+      upgradesBought: [...gameState.upgradesBought, next],
+      money: gameState.money - next.price,
+    });
+    next.action();
+  }
 };
 
 export const swapBulkMode = () => {

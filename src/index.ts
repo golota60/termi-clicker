@@ -19,6 +19,8 @@ import {
   renderActiveState,
   bulkModeState,
   swapBulkMode,
+  getNextUpgrade,
+  buyUpgrade,
 } from './helpers/gameplay.js';
 import chalk from 'chalk';
 
@@ -50,11 +52,18 @@ stdin.on('keypress', function (key, a) {
   // const ctrlX = '\x18';
   // const ctrlZ = '\x1A';
 
+  if (name === 'v') {
+    buyUpgrade();
+  }
+
   if (name === 't') {
     swapBulkMode();
   }
   if (name === mainKeyName) {
-    updateGameState({ ...gameState, money: gameState.money + 1 });
+    updateGameState({
+      ...gameState,
+      money: gameState.money + 1 * gameState.clickPower,
+    });
   }
   // if (name === shopButton) {
   //   updateGameState({ ...gameState, mode: 'shop' });
@@ -109,6 +118,7 @@ setInterval(() => {
   const frame = frames[(index = ++index % frames.length)];
   index > frames.length && (index = 0); //so that index doesn't get out of hand
 
+  const nextUpgrade = getNextUpgrade();
   const firstRow = `${firstColWidth}
 
   Your infrastructure:
@@ -119,6 +129,14 @@ setInterval(() => {
     ['getPercentage', '% of all income'],
     ['level', 'Level'],
   ])}
+
+  Next upgrade: ${
+    `${chalk.yellow(nextUpgrade.name)} - ${
+      nextUpgrade.price > gameState.money
+        ? chalk.red(`$${nextUpgrade.price}`)
+        : chalk.green(`$${nextUpgrade.price}`)
+    } - click 'v' to buy` || 'No upgrades left :('
+  }
 
   ${
     gameState.mode === 'main' &&
@@ -131,6 +149,7 @@ setInterval(() => {
   Money: ${gameState.money}
   Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
+  Click power: ${gameState.clickPower}
   Current buying amount(click 't' to switch): ${renderActiveState(
     gameState.bulkMode,
     bulkModeState
