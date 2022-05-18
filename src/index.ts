@@ -120,7 +120,6 @@ setInterval(() => {
 
   const nextUpgrade = getNextUpgrade();
   const firstRow = `${firstColWidth}
-
   Your infrastructure:
   ${getTabledInfra(gameState.infrastructure, [
     ['getCost', 'Price'],
@@ -137,12 +136,6 @@ setInterval(() => {
         : chalk.green(`$${nextUpgrade.price}`)
     } - click 'v' to buy` || 'No upgrades left :('
   }
-
-  ${
-    gameState.mode === 'main' &&
-    `To open the shop, click the ${shopButton} button`
-  }
-
   `;
 
   const statusRow = `
