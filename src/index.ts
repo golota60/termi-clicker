@@ -1,11 +1,11 @@
 import process from 'process';
 import readline from 'readline';
 import logUpdate from 'log-update';
+import chalk from 'chalk';
 import {
   equalizeStringArray,
   getTabledInfra,
   handleGracefulExit,
-  joinColumns,
   Message,
   renderMessage,
   wrapInBorder,
@@ -22,13 +22,12 @@ import {
   getNextUpgrade,
   buyUpgrade,
 } from './helpers/gameplay.js';
-import chalk from 'chalk';
+import { createDirAndSaveGame } from './helpers/save.js';
 
 const mainKeyName = 'space';
-const shopButton = 's';
 
-//todo: load this when implementing saving
-setupGame();
+// this has to be done before effin with stdin
+await setupGame();
 
 let stdin = process.stdin;
 readline.emitKeypressEvents(stdin);
@@ -36,16 +35,17 @@ stdin.setRawMode(true);
 stdin.resume();
 stdin.setEncoding('utf-8');
 
-console.log(`The game is on! Click "${mainKeyName}" to start earning bobux\n`);
-
 let currKey: string;
 // let debug: Record<string, any>;
 
 let message: Message | undefined;
 stdin.on('keypress', function (key, a) {
+  const { sequence, name } = a;
+  if (name !== 't')
+    updateGameState({ ...gameState, nOfActions: gameState.nOfActions + 1 });
+
   // after each action reset the message
   message = undefined;
-  const { sequence, name } = a;
   currKey = name;
 
   const ctrlC = '\x03';
@@ -105,8 +105,10 @@ stdin.on('keypress', function (key, a) {
 const frames = ['-', '\\', '|', '/'];
 let index = 0;
 
-// min first col width
-const firstColWidth = new Array(60).fill(' ').join('');
+//save game each 60sec
+setInterval(async () => {
+  await createDirAndSaveGame();
+}, 60000);
 
 setInterval(() => {
   const moneyPerSec = calcMoneyPerSec();
@@ -119,7 +121,7 @@ setInterval(() => {
   index > frames.length && (index = 0); //so that index doesn't get out of hand
 
   const nextUpgrade = getNextUpgrade();
-  const firstRow = `${firstColWidth}
+  const firstRow = `The game is on! Click '${mainKeyName}' to earn money
   Your infrastructure:
   ${getTabledInfra(gameState.infrastructure, [
     ['getCost', 'Price'],
@@ -143,6 +145,7 @@ setInterval(() => {
   Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
   Click power: ${gameState.clickPower}
+  Number of action in this run: ${gameState.nOfActions}
   Current buying amount(click 't' to switch): ${renderActiveState(
     gameState.bulkMode,
     bulkModeState
@@ -151,12 +154,12 @@ setInterval(() => {
 
   logUpdate(
     wrapInBorder(`
-      ${equalizeStringArray(firstRow, {
-        endLineOffset: 1,
-      }).join('\n')}
-      ${equalizeStringArray(statusRow, {
-        endLineOffset: 1,
-      }).join('\n')}`),
+  ${equalizeStringArray(firstRow, {
+    endLineOffset: 1,
+  }).join('\n')}
+    ${equalizeStringArray(statusRow, {
+      endLineOffset: 1,
+    }).join('\n')}`),
     message ? renderMessage(message) : ''
   );
 }, 60);

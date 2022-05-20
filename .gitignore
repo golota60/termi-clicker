@@ -3,5 +3,6 @@ build
 lib
 .yalc
 yarn-error.log
+.termi-clicker
 
 .DS_STORE

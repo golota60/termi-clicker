@@ -1,5 +1,6 @@
 import chalk, { ChalkInstance } from 'chalk';
 import { initialInfra, upgradesInOrder } from './initialValues.js';
+import { createDirAndSaveGame, initGame } from './save.js';
 
 //TODO: convert those to funs which load save states when that is implemented
 export interface Upgrade {
@@ -27,6 +28,7 @@ export type InfrastructureState = Record<string, Infrastructure>;
 export const bulkModeState = [1, 10, 100] as const;
 export type BulkModeType = typeof bulkModeState[number];
 export interface GameState {
+  name: string;
   version: string | undefined;
   mode: 'main' | 'shop';
   infrastructure: InfrastructureState;
@@ -35,9 +37,11 @@ export interface GameState {
   clickPower: number;
   moneyPerSecUpgrade: number;
   upgradesBought: Array<any>;
+  nOfActions: number;
 }
 
-export const getFreshGameState = (): GameState => ({
+export const getFreshGameState = (name: string): GameState => ({
+  name,
   version: process.env.npm_package_version,
   mode: 'main',
   money: 0,
@@ -46,6 +50,7 @@ export const getFreshGameState = (): GameState => ({
   clickPower: 1,
   moneyPerSecUpgrade: 1,
   upgradesBought: [],
+  nOfActions: 0,
 });
 
 // This can't be a getter cause we need the exact reference
@@ -56,8 +61,9 @@ export const updateGameState = (newGameState: GameState): GameState => {
   return gameState;
 };
 
-export const setupGame = () => {
-  gameState = getFreshGameState();
+export const setupGame = async () => {
+  gameState = await initGame();
+  await createDirAndSaveGame();
 };
 
 export const calcMoneyPerSec = () => {
