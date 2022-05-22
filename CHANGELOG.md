@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/golota60/termi-clicker/compare/v0.0.13...v0.0.14) (2022-05-22)
+
+
+### Bug Fixes
+
+* even better save paths ([13a92be](https://github.com/golota60/termi-clicker/commit/13a92be724ffc4f4b688cf6b9834bdcfd3d976d9))
+
 ### [0.0.13](https://github.com/golota60/termi-clicker/compare/v0.0.12...v0.0.13) (2022-05-22)
 
 
