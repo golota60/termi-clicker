@@ -44,7 +44,7 @@ const getDoubleDebian = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'debian-linux-instances': {
           ...gameState.infrastructure['debian-linux-instances'],
           multiplier:
             gameState.infrastructure['debian-linux-instances'].multiplier * 2,
@@ -61,7 +61,7 @@ const getDoubleBotnet = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        botnets: {
           ...gameState.infrastructure.botnets,
           multiplier: gameState.infrastructure.botnets.multiplier * 2,
         },
@@ -77,7 +77,7 @@ const getDoubleArch = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'arch-linux-instances': {
           ...gameState.infrastructure['arch-linux-instances'],
           multiplier:
             gameState.infrastructure['arch-linux-instances'].multiplier * 2,
@@ -94,7 +94,7 @@ const getDoubleJS = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'js-libraries': {
           ...gameState.infrastructure['js-libraries'],
           multiplier: gameState.infrastructure['js-libraries'].multiplier * 2,
         },
@@ -110,7 +110,7 @@ const getDoubleCourses = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'udemy-courses': {
           ...gameState.infrastructure['udemy-courses'],
           multiplier: gameState.infrastructure['udemy-courses'].multiplier * 2,
         },
@@ -126,7 +126,7 @@ const getDoubleAI = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'hacking-ais': {
           ...gameState.infrastructure['hacking-ais'],
           multiplier: gameState.infrastructure['hacking-ais'].multiplier * 2,
         },
@@ -142,7 +142,7 @@ const getDoubleStolenDB = (price: number, id: string): BaseUpgrade => ({
       ...gameState,
       infrastructure: {
         ...gameState.infrastructure,
-        hackers: {
+        'stolen-databases': {
           ...gameState.infrastructure['stolen-databases'],
           multiplier:
             gameState.infrastructure['stolen-databases'].multiplier * 2,
