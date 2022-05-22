@@ -1,6 +1,6 @@
 import chalk, { ChalkInstance } from 'chalk';
 import { initialInfra, upgradesInOrder } from './initialValues.js';
-import { createDirAndSaveGame, initGame } from './save.js';
+import { createDirAndSaveGame, initGame, loadGame } from './save.js';
 
 //TODO: convert those to funs which load save states when that is implemented
 export interface Upgrade {
@@ -13,10 +13,18 @@ export interface Infrastructure {
   level: number;
   desc: string;
 
-  getCost: () => number;
-  getMoneyPerSec: () => number;
-  getPercentage: () => number;
-  getColor: () => ChalkInstance;
+  getCost: (gs: GameState) => number;
+  getMoneyPerSec: (gs: GameState) => number;
+  getPercentage: (
+    gs: GameState,
+    // This mirrors genericGetPercentage
+    getPercentageFunc: (base: Infrastructure) => any
+  ) => number;
+  getColor: (
+    gs: GameState,
+    // This mirrors genericGetColor
+    getGenericColor: (base: Infrastructure) => any
+  ) => ChalkInstance;
   alias: string; // How the value should be displayed
   buyKey: number;
   multiplier: number;
@@ -62,13 +70,19 @@ export const updateGameState = (newGameState: GameState): GameState => {
 };
 
 export const setupGame = async () => {
-  gameState = await initGame();
-  await createDirAndSaveGame();
+  const gm = await initGame();
+  gameState = gm.game;
+  if (!gm.loaded) await createDirAndSaveGame();
+  if (gm.loaded) {
+    const loaded = await loadGame(gm.game.name);
+    // const idk = { ...loaded, infrastructure: initialInfra };
+    gameState = { ...loaded };
+  }
 };
 
 export const calcMoneyPerSec = () => {
   const moneyPerSecForEachInfra = Object.values(gameState.infrastructure).map(
-    (val) => val.getMoneyPerSec()
+    (val) => val.getMoneyPerSec(gameState)
   );
   const sum = moneyPerSecForEachInfra.reduce((acc, elem) => acc + elem, 0);
   return Math.floor(sum);

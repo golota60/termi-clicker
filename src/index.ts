@@ -72,9 +72,9 @@ stdin.on('keypress', function (key, a) {
   // if (gameState.mode === 'shop') {
   // if (name === 'x') updateGameState({ ...gameState, mode: 'main' });
 
-  Object.entries(initialInfra).forEach(([key, val]) => {
+  Object.entries(gameState.infrastructure).forEach(([key, val]) => {
     if (name === String(val.buyKey)) {
-      const cost = val.getCost();
+      const cost = val.getCost(gameState);
       if (gameState.money < cost) {
         message = {
           type: 'danger',

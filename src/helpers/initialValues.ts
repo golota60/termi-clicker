@@ -193,38 +193,44 @@ export const upgradesInOrder = [
   getDoubleAI(3300000000, '21'),
 ];
 
-const genericGetColor = (base: Infrastructure) => {
-  if (gameState.money >= base.getCost()) {
+export const genericGetColor = (base: Infrastructure) => {
+  if (gameState.money >= base.getCost(gameState)) {
     return chalk.green;
   }
   return chalk.red;
 };
 
-const genericGetPercentage = (base: Infrastructure) => {
-  const ratio = Math.floor((base.getMoneyPerSec() / calcMoneyPerSec()) * 100);
+export const genericGetPercentage = (base: Infrastructure) => {
+  const ratio = Math.floor(
+    (base.getMoneyPerSec(gameState) / calcMoneyPerSec()) * 100
+  );
   if (isNaN(ratio)) return 0;
   return ratio;
 };
 
-// infrastructure upgrades(money over time)
+//ALL OF FUNCTIONS NEED TO GET EVERYTHINGS AS AN ARGUMENT CAUSE OF SERIALIZATION ISSUES WITH GLOBAL STATE(I.E THEY NEED TO BE PURE)
+//ALSO FUNCTIONS CANNOT BE SHORTENED E.G. () => value. THEY NEED TO LOOK LIKE () => {return value;} BECAUSE OF ISSUE WITH TELEJSON
 export const initialInfra: InfrastructureState = {
   hackers: {
     level: 0,
     alias: 'Hackers',
     desc: 'Other hackers working for you',
 
-    getCost: () =>
-      Math.floor(
-        100 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure.hackers.level * 0.2 || 1)
-      ),
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure.hackers;
+    getCost: (gs) => {
+      return Math.floor(
+        100 * gs.bulkMode * (1 + gs.infrastructure.hackers.level * 0.2 || 1)
+      );
+    },
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure.hackers;
       return base ? 1 * base.level * base.multiplier : 0;
     },
-    getPercentage: () => genericGetPercentage(gameState.infrastructure.hackers),
-    getColor: () => genericGetColor(gameState?.infrastructure?.hackers),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure.hackers);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.hackers);
+    },
     multiplier: 1,
     buyKey: 1,
     // resolver: (money: number) => {
@@ -235,21 +241,23 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Debian Linux Instances',
     desc: 'Your Debian linux instances',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         1200 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['debian-linux-instances'].level * 0.2 ||
-            1)
-      ),
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['debian-linux-instances'];
+          gs.bulkMode *
+          (1 + gs.infrastructure['debian-linux-instances'].level * 0.2 || 1)
+      );
+    },
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['debian-linux-instances'];
       return base ? 8 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['debian-linux-instances']),
-    getColor: () =>
-      genericGetColor(gameState?.infrastructure?.['debian-linux-instances']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['debian-linux-instances']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['debian-linux-instances']);
+    },
     multiplier: 1,
     buyKey: 2,
   },
@@ -257,19 +265,22 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Botnets',
     desc: 'Botnets you control',
-    getCost: () =>
-      Math.floor(
-        12000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure.botnets.level * 0.2 || 1)
-      ),
+    getCost: (gs) => {
+      return Math.floor(
+        12000 * gs.bulkMode * (1 + gs.infrastructure.botnets.level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure.botnets;
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure.botnets;
       return base ? 42 * base.level * base.multiplier : 0;
     },
-    getPercentage: () => genericGetPercentage(gameState.infrastructure.botnets),
-    getColor: () => genericGetColor(gameState?.infrastructure?.botnets),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure.botnets);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.botnets);
+    },
     multiplier: 1,
     buyKey: 3,
   },
@@ -277,22 +288,24 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Arch Linux Instances',
     desc: 'Your Arch linux instances(you use arch btw)',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         110000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['arch-linux-instances'].level * 0.2 ||
-            1)
-      ),
+          gs.bulkMode *
+          (1 + gs.infrastructure['arch-linux-instances'].level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['arch-linux-instances'];
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['arch-linux-instances'];
       return base ? 250 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['arch-linux-instances']),
-    getColor: () =>
-      genericGetColor(gameState?.infrastructure?.['arch-linux-instances']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['arch-linux-instances']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['arch-linux-instances']);
+    },
     multiplier: 1,
     buyKey: 4,
   },
@@ -300,21 +313,24 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Javascript libraries',
     desc: 'JS libraries you use(totally not bloated at all!)',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         1500000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['js-libraries'].level * 0.2 || 1)
-      ),
+          gs.bulkMode *
+          (1 + gs.infrastructure['js-libraries'].level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['js-libraries'];
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['js-libraries'];
       return base ? 1450 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['js-libraries']),
-    getColor: () =>
-      genericGetColor(gameState?.infrastructure?.['js-libraries']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['js-libraries']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['js-libraries']);
+    },
     multiplier: 1,
     buyKey: 5,
   },
@@ -322,21 +338,24 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Online programming courses',
     desc: 'Your programming courses that you are surely going to watch',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         20000000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['udemy-courses'].level * 0.2 || 1)
-      ),
+          gs.bulkMode *
+          (1 + gs.infrastructure['udemy-courses'].level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['udemy-courses'];
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['udemy-courses'];
       return base ? 7500 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['udemy-courses']),
-    getColor: () =>
-      genericGetColor(gameState?.infrastructure?.['udemy-courses']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['udemy-courses']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['udemy-courses']);
+    },
     multiplier: 1,
     buyKey: 6,
   },
@@ -344,20 +363,24 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'AI for hacking',
     desc: 'Next-gen AI that hacks for you!',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         330000000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['hacking-ais'].level * 0.2 || 1)
-      ),
+          gs.bulkMode *
+          (1 + gs.infrastructure['hacking-ais'].level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['hacking-ais'];
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['hacking-ais'];
       return base ? 44000 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['hacking-ais']),
-    getColor: () => genericGetColor(gameState?.infrastructure?.['hacking-ais']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['hacking-ais']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['hacking-ais']);
+    },
     multiplier: 1,
     buyKey: 7,
   },
@@ -365,21 +388,24 @@ export const initialInfra: InfrastructureState = {
     level: 0,
     alias: 'Stolen databases',
     desc: 'Databases you stole',
-    getCost: () =>
-      Math.floor(
+    getCost: (gs) => {
+      return Math.floor(
         5000000000 *
-          gameState.bulkMode *
-          (1 + gameState.infrastructure['stolen-databases'].level * 0.2 || 1)
-      ),
+          gs.bulkMode *
+          (1 + gs.infrastructure['stolen-databases'].level * 0.2 || 1)
+      );
+    },
 
-    getMoneyPerSec: () => {
-      const base = gameState.infrastructure['stolen-databases'];
+    getMoneyPerSec: (gs) => {
+      const base = gs.infrastructure['stolen-databases'];
       return base ? 260000 * base.level * base.multiplier : 0;
     },
-    getPercentage: () =>
-      genericGetPercentage(gameState.infrastructure['stolen-databases']),
-    getColor: () =>
-      genericGetColor(gameState?.infrastructure?.['stolen-databases']),
+    getPercentage: (gs, getPercentageFunc) => {
+      return getPercentageFunc(gs.infrastructure['stolen-databases']);
+    },
+    getColor: (gs, getColorFunc) => {
+      return getColorFunc(gs?.infrastructure?.['stolen-databases']);
+    },
     multiplier: 1,
     buyKey: 8,
   },

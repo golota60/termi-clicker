@@ -2,7 +2,12 @@ import fs from 'fs/promises';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { parse, stringify } from 'telejson';
-import { gameState, GameState, getFreshGameState } from './gameplay.js';
+import {
+  gameState,
+  GameState,
+  getFreshGameState,
+  updateGameState,
+} from './gameplay.js';
 
 const checkSaves = async () => {
   try {
@@ -24,7 +29,7 @@ const createProfilePrompt = async () => {
   return getFreshGameState(newProfilePrompt.profile);
 };
 
-const loadGame = async (fileName: string) => {
+export const loadGame = async (fileName: string) => {
   const file = await fs.readFile(`./termi-clicker/${fileName}.json`, {
     encoding: 'utf-8',
   });
@@ -32,11 +37,15 @@ const loadGame = async (fileName: string) => {
   return parse(file);
 };
 
-export const initGame = async () => {
+export const initGame = async (): Promise<{
+  game: GameState;
+  loaded: boolean;
+}> => {
   const existingSaves = await checkSaves();
   if (!existingSaves) {
     console.log(chalk.yellow('Welcome to termi-clicker!\n'));
-    return await createProfilePrompt();
+    const prof = await createProfilePrompt();
+    return { game: prof, loaded: false };
   } else {
     console.log(chalk.yellow('Welcome back to termi-clicker!\n'));
     const createNew = 'Create a new profile';
@@ -50,7 +59,8 @@ export const initGame = async () => {
       },
     ]);
     if (loadPick === createNew) {
-      return await createProfilePrompt();
+      const prof = await createProfilePrompt();
+      return { game: prof, loaded: false };
     } else if (loadPick === loadExisting) {
       const pickedExistingSave = await inquirer.prompt([
         {
@@ -60,9 +70,14 @@ export const initGame = async () => {
           choices: existingSaves.map((e) => e.split('.')[0]),
         },
       ]);
-      return await loadGame(pickedExistingSave.profile);
+      const temp = getFreshGameState(pickedExistingSave.profile);
+      return { game: temp, loaded: true };
+      // updateGameState(temp);
     }
   }
+  throw new Error(
+    'Error when initializing a game; this should not happen, please open an issue in the github repo'
+  );
 };
 
 const actualSave = async (data: GameState) => {

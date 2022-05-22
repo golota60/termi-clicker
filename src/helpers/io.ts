@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { gameState } from './gameplay.js';
+import { genericGetColor, genericGetPercentage } from './initialValues.js';
 
 const defaultTerminalWidth = 50;
 const defualtTerminalHeight = 24;
@@ -94,7 +95,7 @@ export const getTabledInfra = (
     { endLineOffset: endOffset }
   );
   const handleFunc = (elem: unknown) =>
-    typeof elem === 'function' ? elem() : elem;
+    typeof elem === 'function' ? elem(gameState, genericGetPercentage) : elem;
   const normalizedValues = keysToLog?.map(([fieldName, displayName]) =>
     equalizeStringArray([
       displayName,
@@ -110,7 +111,10 @@ export const getTabledInfra = (
     .join(' | ')}`;
   for (let i = 1; i < displayedKeys.length; i++) {
     stitched = `${stitched}
-    ${gameState.infrastructure?.[normalizedKeys[i]].getColor()(
+    ${gameState.infrastructure?.[normalizedKeys[i]].getColor(
+      gameState,
+      genericGetColor
+    )(
       `${[displayedKeys[i]]}| ${normalizedValues?.map((e) => e[i]).join(' | ')}`
     )}`;
   }
