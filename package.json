@@ -18,7 +18,7 @@
     "lint": "yarn eslint --ext '.js,.ts' ./src --fix",
     "jest": "jest tests",
     "test": "yarn start && yarn lint && yarn jest",
-    "preinstall": "husky install",
+    "prepare": "husky install",
     "prepublishOnly": "git push --tags && yarn && yarn build",
     "release": "standard-version"
   },
