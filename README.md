@@ -20,7 +20,7 @@ _or_ install it globally(not recommended - better to just use the latest version
 
 ## Roadmap
 
-Roadmap is available [here](https://github.com/users/golota60/projects/1/views/1) - If you've got any ideas, feel free to open an issue where we can discuss it!
+Roadmap is available [here](https://github.com/users/golota60/projects/1/views/1?layout=board) - If you've got any ideas, feel free to open an issue where we can discuss it!
 
 ## Additional info
 
