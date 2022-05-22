@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/golota60/termi-clicker/compare/v0.0.5...v0.0.6) (2022-05-22)
+
+
+### Features
+
+* back to cjs cause npx is annoying ([acd91b1](https://github.com/golota60/termi-clicker/commit/acd91b1adb9d9f4a3b8e191375179916c6b2bb25))
+
+
+### Bug Fixes
+
+* ts -> mts ([71d42a0](https://github.com/golota60/termi-clicker/commit/71d42a06500b13e0026c668a73412791a75568a3))
+
 ### [0.0.5](https://github.com/golota60/termi-clicker/compare/v0.0.4...v0.0.5) (2022-05-22)
 
 ### [0.0.4](https://github.com/golota60/termi-clicker/compare/v0.0.3...v0.0.4) (2022-05-22)
