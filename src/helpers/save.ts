@@ -11,7 +11,9 @@ import {
 
 const checkSaves = async () => {
   try {
-    const existingSavesArr = await fs.readdir('../../../termi-clicker');
+    const existingSavesArr = await fs.readdir(
+      __dirname + '../../../termi-clicker'
+    );
     return existingSavesArr;
   } catch (err) {
     return undefined;
@@ -30,9 +32,12 @@ const createProfilePrompt = async () => {
 };
 
 export const loadGame = async (fileName: string) => {
-  const file = await fs.readFile(`../../../termi-clicker/${fileName}.json`, {
-    encoding: 'utf-8',
-  });
+  const file = await fs.readFile(
+    __dirname + `../../../termi-clicker/${fileName}.json`,
+    {
+      encoding: 'utf-8',
+    }
+  );
   return parse(file);
 };
 
@@ -81,20 +86,20 @@ export const initGame = async (): Promise<{
 
 const actualSave = async (data: GameState) => {
   await fs.writeFile(
-    `../../../termi-clicker/${data.name}.json`,
+    __dirname + `../../../termi-clicker/${data.name}.json`,
     stringify(data)
   );
 };
 
 export const createDirAndSaveGame = async () => {
   try {
-    await fs.readdir('../../../termi-clicker');
+    await fs.readdir(__dirname + '../../../termi-clicker');
 
     await actualSave(gameState);
   } catch (err: any) {
     const isNoPrevSave = err.code === 'ENOENT';
     if (isNoPrevSave) {
-      await fs.mkdir('../../../termi-clicker');
+      await fs.mkdir(__dirname + '../../../termi-clicker');
 
       await actualSave(gameState);
     } else {
