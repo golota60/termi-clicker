@@ -2,8 +2,8 @@
   "name": "termi-clicker",
   "author": "Szymon Wiszczuk<golota60@gmail.com>",
   "version": "0.0.5",
-  "exports": "./lib/index.mjs",
-  "type": "module",
+  "description": "A programming-themed clicker game for your terminal!",
+  "main": "./lib/index.js",
   "license": "MIT",
   "homepage": "https://github.com/golota60/termi-clicker#readme",
   "repository": {
@@ -20,7 +20,7 @@
     "*": "yarn test"
   },
   "bin": {
-    "termi-clicker": "./lib/index.mjs"
+    "termi-clicker": "./lib/index.js"
   },
   "engines": {
     "node": ">=14.16"
@@ -37,7 +37,7 @@
   },
   "scripts": {
     "build": "rimraf lib && tsc",
-    "start": "yarn build && node lib/index.mjs",
+    "start": "yarn build && node lib/index.js",
     "clean": "rimraf lib",
     "lint": "yarn eslint --ext '.js,.ts' ./src --fix",
     "jest": "jest tests",
@@ -47,9 +47,9 @@
     "release": "standard-version"
   },
   "dependencies": {
-    "chalk": "^5.0.1",
+    "chalk": "^4.0.0",
     "inquirer": "^8.2.4",
-    "log-update": "^5.0.1",
+    "log-update": "^4.0.0",
     "telejson": "^6.0.8"
   },
   "devDependencies": {

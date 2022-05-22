@@ -1,4 +1,4 @@
-import chalk, { ChalkInstance } from 'chalk';
+import chalk from 'chalk';
 import { initialInfra, upgradesInOrder } from './initialValues.js';
 import { createDirAndSaveGame, initGame, loadGame } from './save.js';
 
@@ -24,7 +24,7 @@ export interface Infrastructure {
     gs: GameState,
     // This mirrors genericGetColor
     getGenericColor: (base: Infrastructure) => any
-  ) => ChalkInstance;
+  ) => any;
   alias: string; // How the value should be displayed
   buyKey: number;
   multiplier: number;
