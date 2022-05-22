@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/golota60/termi-clicker/compare/v0.0.6...v0.0.7) (2022-05-22)
+
+
+### Bug Fixes
+
+* add shebang for compat issues ([51bd892](https://github.com/golota60/termi-clicker/commit/51bd892ff8b9cff96ff21ac662d8d8cbbec8b308))
+
 ### [0.0.6](https://github.com/golota60/termi-clicker/compare/v0.0.5...v0.0.6) (2022-05-22)
 
 
