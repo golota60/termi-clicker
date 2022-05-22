@@ -1,7 +1,7 @@
 {
   "name": "termi-clicker",
   "author": "Szymon Wiszczuk<golota60@gmail.com>",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A programming-themed clicker game for your terminal!",
   "main": "./lib/index.js",
   "license": "MIT",
