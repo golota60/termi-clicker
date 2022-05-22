@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import process from 'process';
 import readline from 'readline';
 import logUpdate from 'log-update';
