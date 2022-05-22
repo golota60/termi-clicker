@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/golota60/termi-clicker/compare/v0.0.8...v0.0.9) (2022-05-22)
+
+
+### Features
+
+* increase frequency of auto saves ([ad9f3b1](https://github.com/golota60/termi-clicker/commit/ad9f3b17bd5ecbfab0bd40fb4b474ad086781c4b))
+
 ### [0.0.8](https://github.com/golota60/termi-clicker/compare/v0.0.7...v0.0.8) (2022-05-22)
 
 ### [0.0.7](https://github.com/golota60/termi-clicker/compare/v0.0.6...v0.0.7) (2022-05-22)
