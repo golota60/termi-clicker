@@ -110,7 +110,7 @@ const mainKeyName = 'space';
   //save game each 60sec
   setInterval(async () => {
     await createDirAndSaveGame();
-  }, 60000);
+  }, 10000);
 
   setInterval(() => {
     const moneyPerSec = calcMoneyPerSec();
@@ -147,7 +147,7 @@ const mainKeyName = 'space';
   Money per second: ${calcMoneyPerSec()}
   Last key: ${currKey}
   Click power: ${gameState.clickPower}
-  Number of action in this run: ${gameState.nOfActions}
+  Number of actions in this run: ${gameState.nOfActions}
   Current buying amount(click 't' to switch): ${renderActiveState(
     gameState.bulkMode,
     bulkModeState

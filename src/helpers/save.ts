@@ -33,7 +33,6 @@ export const loadGame = async (fileName: string) => {
   const file = await fs.readFile(`./termi-clicker/${fileName}.json`, {
     encoding: 'utf-8',
   });
-  console.log(parse(file));
   return parse(file);
 };
 
