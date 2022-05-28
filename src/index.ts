@@ -23,6 +23,8 @@ import {
   swapBulkMode,
   getNextUpgrade,
   buyUpgrade,
+  isPrestigeAvailable,
+  commitPrestige,
 } from './helpers/gameplay.js';
 import { createDirAndSaveGame } from './helpers/save.js';
 
@@ -43,6 +45,9 @@ const mainKeyName = 'space';
   let message: Message | undefined;
   stdin.on('keypress', function (key, a) {
     const { sequence, name } = a;
+    if (name === 'p') {
+      commitPrestige();
+    }
     if (name !== 't')
       updateGameState({ ...gameState, nOfActions: gameState.nOfActions + 1 });
 
@@ -152,6 +157,16 @@ const mainKeyName = 'space';
     gameState.bulkMode,
     bulkModeState
   )}
+  Prestiges: ${gameState.prestiges!} ${
+      isPrestigeAvailable()
+        ? "- You can prestige now! click 'p' to prestige"
+        : ''
+    }
+  Prestiges restart your game with ${chalk.yellow(
+    'permamently'
+  )} increased click power by ${chalk.yellow(
+      'one'
+    )}. You need to have all of the upgrades to qualify for a prestige!
 `;
 
     logUpdate(

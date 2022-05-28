@@ -2,17 +2,20 @@ import fs from 'fs/promises';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { parse, stringify } from 'telejson';
-import {
-  gameState,
-  GameState,
-  getFreshGameState,
-  updateGameState,
-} from './gameplay.js';
+import { gameState, GameState, getFreshGameState } from './gameplay.js';
+
+//prod is default
+const isDev = process.env.NODE_ENV === 'development';
+
+const devPath = '/../../';
+const prodPath = '/../../../../../../../';
+
+const getPath = () => (isDev ? devPath : prodPath);
 
 const checkSaves = async () => {
   try {
     const existingSavesArr = await fs.readdir(
-      __dirname + '/../../../../../../../termi-clicker'
+      __dirname + getPath() + 'termi-clicker'
     );
     return existingSavesArr;
   } catch (err) {
@@ -33,7 +36,7 @@ const createProfilePrompt = async () => {
 
 export const loadGame = async (fileName: string) => {
   const file = await fs.readFile(
-    __dirname + `/../../../../../../../termi-clicker/${fileName}.json`,
+    __dirname + getPath() + `termi-clicker/${fileName}.json`,
     {
       encoding: 'utf-8',
     }
@@ -86,20 +89,20 @@ export const initGame = async (): Promise<{
 
 const actualSave = async (data: GameState) => {
   await fs.writeFile(
-    __dirname + `/../../../../../../../termi-clicker/${data.name}.json`,
+    __dirname + getPath() + `termi-clicker/${data.name}.json`,
     stringify(data)
   );
 };
 
 export const createDirAndSaveGame = async () => {
   try {
-    await fs.readdir(__dirname + '/../../../../../../../termi-clicker');
+    await fs.readdir(__dirname + getPath() + 'termi-clicker');
 
     await actualSave(gameState);
   } catch (err: any) {
     const isNoPrevSave = err.code === 'ENOENT';
     if (isNoPrevSave) {
-      await fs.mkdir(__dirname + '/../../../../../../../termi-clicker');
+      await fs.mkdir(__dirname + getPath() + 'termi-clicker');
 
       await actualSave(gameState);
     } else {

@@ -37,7 +37,7 @@
   },
   "scripts": {
     "build": "rimraf lib && tsc",
-    "start": "yarn build && node lib/index.js",
+    "start": "yarn build && NODE_ENV=development node lib/index.js",
     "clean": "rimraf lib",
     "lint": "yarn eslint --ext '.js,.ts' ./src --fix",
     "jest": "jest tests",
